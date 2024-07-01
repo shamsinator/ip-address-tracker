@@ -4,11 +4,11 @@ import mobileImage from '../assets/pattern-bg-mobile.png'
 import SearchForm from './SearchForn'
 
 const Header: React.FC = () => {
-  const [backgroundImage, setBackgroundImage] = React.useState(
+  const [backgroundImage, setBackgroundImage] = useState(
     window.innerWidth <= 768 ? mobileImage : desktopImage
   )
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       setBackgroundImage(window.innerWidth <= 768 ? mobileImage : desktopImage)
     }
