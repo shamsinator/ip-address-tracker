@@ -1,4 +1,5 @@
-import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps'
+import { APIProvider, Map, AdvancedMarker } from '@vis.gl/react-google-maps'
+import iconLocation from '../assets/icon-location.svg'
 
 const containerStyle = {
   width: '100vw',
@@ -13,10 +14,15 @@ const center = {
 const MapSection = () => {
   return (
     <section className='relative w-full h-160 z-0'>
-      {/* <div id='map' className='h-full'></div> */}
       <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}>
-        <Map defaultCenter={center} defaultZoom={12} style={containerStyle}>
-          <Marker position={center} />
+        <Map
+          defaultCenter={center}
+          defaultZoom={10}
+          style={containerStyle}
+          mapId={'8f6b8e6e2f6b7d9b'}>
+          <AdvancedMarker position={center}>
+            <img src={iconLocation} width={32} height={32} />
+          </AdvancedMarker>
         </Map>
       </APIProvider>
     </section>
