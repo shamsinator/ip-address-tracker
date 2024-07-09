@@ -26,7 +26,7 @@ const Header: React.FC = () => {
 
   return (
     <section
-      className='bg-dark-gray relative w-full bg-center bg-no-repeat bg-cover text-center flex flex-col gap-6 h-80'
+      className='w-full h-[280px] bg-dark-gray relative bg-center bg-no-repeat bg-cover text-center flex flex-col gap-6'
       style={styles}>
       <h1
         className='text-2xl text-white mt-8 font-medium'
