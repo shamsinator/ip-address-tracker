@@ -26,7 +26,7 @@ const SearchForm: React.FC = () => {
         type='text'
         placeholder='Search for any IP address or domain'
         required
-        className='cursor-text w-4/5 max-w-md border-transparent rounded-l-lg placeholder:text-lg text-lg p-4 font-normal'
+        className='cursor-text w-4/5 max-w-md border-transparent rounded-l-xl placeholder:text-lg text-lg p-4 font-normal'
         value={ipAddress}
         onChange={(event) => setIpAddress(event.target.value)}
         aria-label='IP address or domain'
