@@ -24,9 +24,9 @@ const DataSection: React.FC = () => {
   const { geoData } = useGeolocation()
 
   return (
-    <section className='absolute z-10 top-1/4 flex flex-col bg-white rounded-lg w-4/5 text-center gap-6 p-4 shadow-lg sm:flex-row sm:w-11/12 sm:max-w-5xl sm:justify-between sm:items-center sm:text-left sm:py-8 sm:px-8 leading-10'>
+    <section className='absolute top-1/4 z-10 flex w-4/5 flex-col gap-6 rounded-lg bg-white p-4 text-center leading-10 shadow-lg sm:w-11/12 sm:max-w-5xl sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-8 sm:text-left'>
       <DataItem title='IP Address' data={geoData?.ip} />
-      <div className='hidden sm:block h-16 border-l border-gray-300 mx-4'></div>
+      <div className='mx-4 hidden h-16 border-l border-gray-300 sm:block'></div>
       <DataItem
         title='Location'
         data={
@@ -35,9 +35,9 @@ const DataSection: React.FC = () => {
             : undefined
         }
       />
-      <div className='hidden sm:block h-16 border-l border-gray-300 mx-4'></div>
+      <div className='mx-4 hidden h-16 border-l border-gray-300 sm:block'></div>
       <DataItem title='Timezone' data={geoData?.location.timezone} />
-      <div className='hidden sm:block h-16 border-l border-gray-300 mx-4'></div>
+      <div className='mx-4 hidden h-16 border-l border-gray-300 sm:block'></div>
       <DataItem title='ISP' data={geoData?.isp} />
     </section>
   )

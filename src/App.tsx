@@ -8,8 +8,8 @@ export default function App() {
   return (
     <GeolocationProvider>
       <div className='App'>
-        <div className='min-h-screen overflow-y-scroll box-border font-rubik'>
-          <main className='w-full flex flex-col justify-center items-center'>
+        <div className='box-border min-h-screen overflow-y-scroll font-rubik'>
+          <main className='flex w-full flex-col items-center justify-center'>
             <Header />
             <DataSection />
             <MapSection />

@@ -26,10 +26,10 @@ const Header: React.FC = () => {
 
   return (
     <section
-      className='w-full h-[280px] bg-dark-gray relative bg-center bg-no-repeat bg-cover text-center flex flex-col gap-6'
+      className='relative flex h-[280px] w-full flex-col gap-6 bg-dark-gray bg-cover bg-center bg-no-repeat text-center'
       style={styles}>
       <h1
-        className='text-2xl text-white mt-8 font-medium'
+        className='mt-8 text-2xl font-medium text-white'
         style={{ wordSpacing: '9px' }}>
         IP Address Tracker
       </h1>

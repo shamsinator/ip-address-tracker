@@ -47,7 +47,7 @@ const SearchForm: React.FC = () => {
           type='text'
           placeholder='Search for any IP address or domain'
           required
-          className='cursor-text w-4/5 border-transparent rounded-l-xl placeholder:text-lg text-lg p-4 font-normal focus:outline-none'
+          className='w-4/5 cursor-text rounded-l-xl border-transparent p-4 text-lg font-normal placeholder:text-lg focus:outline-none'
           value={ipAddress}
           onChange={(event) => setIpAddress(event.target.value)}
           onKeyDown={handleKeyPress}
@@ -56,7 +56,7 @@ const SearchForm: React.FC = () => {
         <button
           onClick={handleFetchGeolocation}
           type='submit'
-          className='bg-black text-white p-4 rounded-r-2xl transition ease-in-out duration-300 hover:bg-veryDarkGray'>
+          className='hover:bg-veryDarkGray rounded-r-2xl bg-black p-4 text-white transition duration-300 ease-in-out'>
           <img src={iconArrowSVG} alt='icon arrow' />
         </button>
       </form>
