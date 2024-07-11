@@ -14,13 +14,14 @@ IP Address Tracker created to help you get the IP Address locations (using the I
 - [Dependencies](#dependencies)
 - [Author](#author)
 
-**IMPORTANT**:
+<br/>
 
-- To use the **IP Geolocation API** by **IPify**, you'll need to sign up for a free account. You won't need to add any cards details to do this and it's a very quick process.
-  This will generate an API Key for you. Usually, you would be able to restrict your API Key to a specific URL (your own domain). This makes sure that other people can't use your API Key on their own websites.
-  IPify doesn't have this feature.
-  - Use your API key for the `VITE_GEOLOCATION_API_KEY` environment variable
-- Make sure to create your own [Google Maps API key](https://developers.google.com/maps/get-started) and use this for the `VITE_GOOGLE_MAPS_API_KEY` environment variable
+> [!NOTE]
+>
+> - To use the **IP Geolocation API** by **IPify**, you'll need to sign up for a free account. You won't need to add any cards details to do this and it's a very quick process. This will generate an API Key for you. Usually, you would be able to restrict your API Key to a specific URL (your own domain). This makes sure that other people can't use your API Key on their own websites. IPify doesn't have this feature.
+> - Use your API key for the `VITE_GEOLOCATION_API_KEY` environment variable
+> - Make sure to create your own [Google Maps API key](https://developers.google.com/maps/get-started) and use this for the `VITE_GOOGLE_MAPS_API_KEY` environment variable.
+> - And create also a [**Map ID**](https://developers.google.com/maps/get-started), this is a unique identifier that represents a single instance of a Google Map. Once you have created this ID, make sure to use this for the `VITE_GOOGLE_MAPS_MAP_ID` environment variable.
 
 ## Features
 

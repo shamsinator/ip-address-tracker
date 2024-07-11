@@ -10,6 +10,7 @@ const containerStyle = {
 const MapSection = () => {
   const { geoData } = useGeolocation()
 
+  const zoomLevel = 12
   const center =
     geoData?.location.lat && geoData?.location.lng
       ? {
@@ -24,18 +25,18 @@ const MapSection = () => {
         {center ? (
           <Map
             center={center}
-            zoom={12}
+            zoom={zoomLevel}
             style={containerStyle}
-            mapId={'8f6b8e6e2f6b7d9b'}>
+            mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID as string}>
             <AdvancedMarker position={center}>
               <img src={iconLocation} width={40} height={40} />
             </AdvancedMarker>
           </Map>
         ) : (
           <Map
-            zoom={12}
+            zoom={zoomLevel}
             style={containerStyle}
-            mapId={'8f6b8e6e2f6b7d9b'}></Map>
+            mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID as string}></Map>
         )}
       </APIProvider>
     </section>
