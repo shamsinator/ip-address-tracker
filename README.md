@@ -37,10 +37,9 @@ IP Address Tracker created to help you get the IP Address locations (using the I
 Make sure you have the following installed on your machine:
 
 ![Node](https://img.shields.io/badge/-nodejs-black?style=for-the-badge&logoColor=white&logo=node.js&color=366A31)
-![PNPM](https://img.shields.io/badge/-pnpm-black?style=for-the-badge&logoColor=white&logo=pnpm&color=B76507)
 
-- Node.js (>=14.x)
-- NPM (>=6.x) or yarn (>=1.22.x)
+- Node.js (>=16.x)
+- npm (included with Node.js)
 
 ### Installation
 
