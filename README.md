@@ -29,6 +29,7 @@ IP Address Tracker created to help you get the IP Address locations (using the I
 - **Modern UI:** Built with React and styled with TailwindCSS for a clean and responsive design.
 - **Fast and Efficient:** Utilizes Vite for fast development and build processes.
 - **Type Safety:** Developed using TypeScript to enhance code quality and maintainability.
+- **Security Enhanced:** Protected against DoS attacks with response size limits, request timeouts, and input validation.
 
 ## Getting Started
 
@@ -91,6 +92,16 @@ npm run preview
 This will start a server to preview the built application.
 
 ## Code Quality
+
+### Security
+
+This application implements several security measures to protect against DoS attacks and SSRF vulnerabilities:
+
+- **Response Size Limits:** All HTTP requests are limited to 50KB to prevent memory exhaustion
+- **Request Timeouts:** Requests timeout after 10 seconds to prevent hanging connections
+- **Input Validation:** IP addresses are validated using strict regex patterns to prevent injection attacks
+- **Redirect Limits:** Maximum of 3 redirects allowed to prevent redirect loops
+- **Error Handling:** Comprehensive error handling with security-focused messaging
 
 ### Formatting
 
