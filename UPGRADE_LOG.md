@@ -83,13 +83,43 @@ vulnerabilities (10 moderate, 6 high), down from 19.
 
 Code changes: none.
 
+## Phase 2 – Minor
+
+`npx npm-check-updates --target minor --reject eslint-plugin-react-refresh,prettier-plugin-tailwindcss -u`
+(both are 0.x "minors" and are treated as majors in phase 3):
+
+| Package                   | Range before | Range after | Installed       |
+| ------------------------- | ------------ | ----------- | --------------- |
+| @vis.gl/react-google-maps | ^1.8.3       | ^1.10.2     | 1.8.3 → 1.10.2  |
+| @vitejs/plugin-react      | ^5.0.4       | ^5.2.0      | 5.2.0           |
+| autoprefixer              | ^10.4.27     | ^10.6.2     | 10.5.1 → 10.6.2 |
+| axios                     | ^1.18.1      | ^1.21.1     | 1.18.1 → 1.21.1 |
+| dotenv                    | ^16.5.0      | ^16.6.1     | 16.6.1          |
+| eslint-plugin-import      | ^2.31.0      | ^2.32.0     | 2.32.0          |
+| eslint-plugin-prettier    | ^5.4.1       | ^5.5.7      | 5.5.6 → 5.5.7   |
+| prettier                  | ^3.5.3       | ^3.10.1     | 3.8.4 → 3.10.1  |
+| typescript                | ^5.8.3       | ^5.9.3      | 5.9.3           |
+| vite                      | ^6.0.15      | ^6.4.6      | 6.4.3 → 6.4.6   |
+
+Verification: `npm ci` ok without peer warnings, lint 0/0, build ok,
+Prettier clean (Prettier 3.10 produced no reformatting), `dev` and `preview`
+respond with HTTP 200. `npm audit`: 11 vulnerabilities (9 moderate, 2 high).
+
+Code changes: none. No new deprecation warnings.
+
+Deviation – bundle size: JS 234.68 kB → 256.75 kB (gzip 78.62 → 86.12 kB).
+Sourcemap comparison of unminified source per package: `axios` 145.8 →
+191.7 kB, `@vis.gl/react-google-maps` 146.3 → 181.6 kB; everything else is
+unchanged. This is upstream growth, not a configuration issue.
+
 ## Open items
 
-- Deprecation warnings during install (`inflight`, `rimraf@3`, `glob@7`,
-  `glob@10`, `@humanwhocodes/*`, `eslint@8`) all come from the ESLint 8 tree;
-  expected to disappear in phase 3, step 2.
-- Remaining audit findings (axios, vite, postcss-selector-parser,
-  follow-redirects, …) need minor or major upgrades.
+- Deprecation warnings during install: `inflight`, `rimraf@3`, `glob@7`,
+  `@humanwhocodes/*` and `eslint@8` come from the ESLint 8 tree (phase 3,
+  step 2); `glob@10` comes from `sucrase` via Tailwind 3 (phase 3, step 9).
+- Remaining audit findings are transitive (`brace-expansion`, `js-yaml`,
+  `postcss-selector-parser`, `glob`, `minimatch`) and sit in the ESLint 8,
+  `@typescript-eslint` 7 and Tailwind 3 trees.
 - Pre-existing, out of scope: searching by domain is not implemented (input
   validation only accepts IPv4, and the regex has no `$` anchor).
 - Pre-existing, out of scope: `h-160` and `hover:bg-veryDarkGray` are not
