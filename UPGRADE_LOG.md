@@ -308,6 +308,34 @@ Verification (Node 26): `npm ci` ok without peer warnings, lint 0/0, build ok
 GHSA-g3hv-75wg-m249 (`minimatch` <11.0.1); ESLint 10 and jsx-a11y-x also
 depend on `minimatch@^10`.
 
+## Phase 3, step 4 – Prettier toolchain
+
+Source checked: `prettier-plugin-tailwindcss` CHANGELOG 0.7.0–0.8.1.
+Relevant changes: 0.8.0 requires Prettier ≥ 3.7 (installed: 3.10.1); 0.7.0
+falls back to Tailwind v4 only when no Tailwind installation is found and
+loads Tailwind relative to the input file.
+
+Packages: `prettier-plugin-tailwindcss` 0.6.14 → 0.8.1. `prettier` stays at
+3.10.1 (already latest).
+
+Checks:
+
+- `npx prettier --check .` and `npm run format`: no changes (no mass
+  reformatting, so no separate formatting commit needed).
+- Class sorting still uses the Tailwind 3 config: with a probe input,
+  the custom color `text-very-dark-gray` from `tailwind.config.js` was
+  sorted as a utility and an unknown class was moved to the front.
+- The `format` script (single-quoted glob) works on Windows.
+
+Config: unchanged for now. Finalised after the Tailwind 4 step
+(`tailwindStylesheet` instead of the v3 config).
+
+Code changes: none.
+
+Verification (Node 26): `npm ci` ok without peer warnings, lint 0/0, build ok
+(sizes unchanged), Prettier clean, `dev` and `preview` HTTP 200.
+`npm audit`: unchanged (13 moderate, single `minimatch` advisory).
+
 ## Open items
 
 - Local system Node is 22.15.0; install Node 26 (e.g. via nvm-windows or
