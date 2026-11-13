@@ -356,12 +356,51 @@ Verification (Node 26): `npm ci` ok without peer warnings, lint 0/0, build ok
 (JS 255.34 kB, gzip 85.99 kB; CSS unchanged), Prettier clean, `dev` and
 `preview` HTTP 200. `npm audit`: unchanged.
 
+## Phase 3, step 5b – Vite 8 and `@vitejs/plugin-react` 6
+
+Sources checked: Vite "Migration from v7" guide and the
+`@vitejs/plugin-react` CHANGELOG (6.0.0–6.3.0).
+
+Packages: `vite` 7.3.8 → 8.3.8 (bundles `rolldown` 1.2.19 and `lightningcss`
+1.33.0), `@vitejs/plugin-react` 5.2.0 → 6.3.0. `esbuild` is now only an
+optional peer of Vite and is no longer installed. That resolves the npm
+11.20 `allowScripts` warning from step 1 without approving any script.
+plugin-react 6 peers (`@rolldown/plugin-babel`, `oxc-transform-react`,
+`babel-plugin-react-compiler`) are optional and not needed.
+
+Relevant changes:
+
+- Default `build.target` moves again: Chrome/Edge 111, Firefox 114,
+  Safari 16.4.
+- Rolldown + Oxc replace Rollup + esbuild for bundling, transforms and JS
+  minification; Lightning CSS minifies CSS.
+- plugin-react 6 no longer uses Babel. The config used plain `react()`
+  without `babel` options, so `@rolldown/plugin-babel` is not needed.
+- `build.rollupOptions` is not used, so nothing to rename.
+
+Config and code changes: none.
+
+Bundle size compared with Vite 7: JS 255.34 → 250.08 kB (gzip 85.99 →
+83.72 kB); CSS 8.21 → 7.03 kB (gzip 2.50 → 2.47 kB). The CSS difference was
+checked rule by rule: same selectors and declarations, only rewritten by
+Lightning CSS (`transparent` → `#0000`, longhand → shorthand `border`,
+merged `::backdrop` rule, `91.666667%` → `91.6667%`). Prefix changes match
+the new target: `-moz-tab-size` dropped (Firefox 114 supports `tab-size`),
+`-webkit-backdrop-filter` added to `.transition` for Safari.
+
+Dev server check: the React Refresh preamble and `$RefreshReg$` are
+injected (now via Oxc), Tailwind output is served, and `import.meta.env`
+works.
+
+Verification (Node 26): `npm ci` ok without peer warnings and without the
+`allowScripts` warning, lint 0/0, build ok (542 ms), Prettier clean, `dev`
+and `preview` HTTP 200. `npm audit`: unchanged.
+
 ## Open items
 
 - Local system Node is 22.15.0; install Node 26 (e.g. via nvm-windows or
   the official installer) so `npm` matches `engines`. On Node 22, npm prints
   an `EBADENGINE` warning but still installs.
-- npm 11.20 `allowScripts` warning for `esbuild` (deferred to step 5).
 - Temporary: `overrides` for `eslint-plugin-react` and the pinned
   `settings.react.version`. Remove both once `eslint-plugin-react` releases
   ESLint 10 support (PR #4022), and switch back to `'detect'`.
