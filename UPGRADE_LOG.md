@@ -613,9 +613,10 @@ Bundle compared with the baseline: JS 234.68 → 329.12 kB (gzip 78.62 →
   `settings.react.version`. Remove both once `eslint-plugin-react` releases
   ESLint 10 support (PR #4022), and switch back to `'detect'`.
 - `minimatch` advisory GHSA-g3hv-75wg-m249 (waiting for upstream).
-- Search button hover: `hover:bg-veryDarkGray` never worked (no such color);
-  the intended class is probably `hover:bg-very-dark-gray`. To be handled
-  separately after the upgrade (decision after step 9).
+- Search button hover: resolved separately on branch
+  `fix/search-button-hover` (`hover:bg-veryDarkGray` →
+  `hover:bg-very-dark-gray`; verified in headless Chrome: black →
+  `rgb(43, 43, 43)` on hover, only on devices that support hover).
 - Pre-existing, out of scope: searching by domain is not implemented (input
   validation only accepts IPv4, and the regex has no `$` anchor). The ipify
   API supports a separate `domain` parameter for this.
