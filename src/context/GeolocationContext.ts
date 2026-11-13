@@ -1,4 +1,5 @@
 import { createContext } from 'react'
+
 import { GeolocationData } from '../services/ipGeolocation'
 
 export interface GeolocationContextType {

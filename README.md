@@ -38,7 +38,7 @@ Make sure you have the following installed on your machine:
 
 ![Node](https://img.shields.io/badge/-nodejs-black?style=for-the-badge&logoColor=white&logo=node.js&color=366A31)
 
-- Node.js (>=16.x)
+- Node.js 26 (LTS), as pinned in `.nvmrc`
 - npm (included with Node.js)
 
 ### Installation
@@ -124,7 +124,6 @@ npm run lint
 - ESLint: A tool for identifying and fixing problems in JavaScript code.
 - Prettier: An opinionated code formatter.
 - TailwindCSS: A utility-first CSS framework.
-- dotenv: Loads environment variables from a .env file into process.env.
 
 ## Author
 

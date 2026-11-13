@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { getGeolocation } from '../services/ipGeolocation'
-import { useGeolocation } from '../context/useGeolocation'
+
 import iconArrowSVG from '../assets/icon-arrow.svg'
+import { useGeolocation } from '../context/useGeolocation'
+import { getGeolocation } from '../services/ipGeolocation'
 
 const SearchForm: React.FC = () => {
   const [ipAddress, setIpAddress] = useState<string>('')
@@ -28,7 +29,7 @@ const SearchForm: React.FC = () => {
       const data = await getGeolocation(ipAddress)
       setGeoData(data)
       setError(null)
-    } catch (error) {
+    } catch {
       setGeoData(null)
       setError('Could not fetch geolocation data.')
     }
@@ -47,7 +48,7 @@ const SearchForm: React.FC = () => {
           type='text'
           placeholder='Search for any IP address or domain'
           required
-          className='w-4/5 cursor-text rounded-l-xl border-transparent p-4 text-lg font-normal placeholder:text-lg focus:outline-none'
+          className='w-4/5 cursor-text rounded-l-xl border-transparent bg-white p-4 text-lg font-normal placeholder:text-lg focus:outline-hidden'
           value={ipAddress}
           onChange={(event) => setIpAddress(event.target.value)}
           onKeyDown={handleKeyPress}
@@ -56,7 +57,7 @@ const SearchForm: React.FC = () => {
         <button
           onClick={handleFetchGeolocation}
           type='submit'
-          className='hover:bg-veryDarkGray rounded-r-2xl bg-black p-4 text-white transition duration-300 ease-in-out'>
+          className='rounded-r-2xl bg-black p-4 text-white transition duration-300 ease-in-out hover:bg-very-dark-gray'>
           <img src={iconArrowSVG} alt='icon arrow' />
         </button>
       </form>

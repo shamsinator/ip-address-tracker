@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { useGeolocation } from '../context/useGeolocation'
 import DataItem from './DataItem'
 

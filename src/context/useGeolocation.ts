@@ -1,8 +1,9 @@
 import { useContext } from 'react'
+
 import {
+  defaultValue,
   GeolocationContext,
-  GeolocationContextType,
-  defaultValue
+  GeolocationContextType
 } from './GeolocationContext'
 
 /**
