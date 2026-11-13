@@ -1,6 +1,7 @@
-import React, { useState, useEffect, ReactNode } from 'react'
-import { GeolocationContext } from './GeolocationContext'
+import React, { ReactNode, useEffect, useState } from 'react'
+
 import { GeolocationData, getGeolocation } from '../services/ipGeolocation'
+import { GeolocationContext } from './GeolocationContext'
 
 /**
  * GeolocationProvider component that provides geolocation data to its children.

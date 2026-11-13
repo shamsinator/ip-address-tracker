@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+
 import desktopImage from '../assets/pattern-bg-desktop.png'
 import mobileImage from '../assets/pattern-bg-mobile.png'
 import SearchForm from './SearchForn'

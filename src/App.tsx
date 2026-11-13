@@ -1,6 +1,7 @@
 import './App.css'
-import Header from './components/Header'
+
 import DataSection from './components/DataSection'
+import Header from './components/Header'
 import MapSection from './components/MapSection'
 import { GeolocationProvider } from './context/GeolocationProvider'
 

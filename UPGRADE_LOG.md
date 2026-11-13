@@ -153,18 +153,109 @@ configuration change. esbuild works without it (the binary comes from the
 optional `@esbuild/win32-x64` package). Revisit in step 5, because Vite 8 may
 no longer need esbuild.
 
+## Phase 3, step 2 – ESLint 9 with flat config
+
+Sources checked: ESLint `migrate-to-9.0.0.md` (v9.39.5), changelogs of
+`eslint-plugin-simple-import-sort` (13, 14), `eslint-plugin-react-refresh`
+(0.5.x), `eslint-config-prettier` (10.x) and the `eslint-plugin-react-hooks`
+README. The exports of the installed plugins were checked before writing the
+config.
+
+Packages:
+
+| Package                          | Before | After         |
+| -------------------------------- | ------ | ------------- |
+| eslint                           | 8.57.1 | 9.39.5        |
+| @eslint/js                       | –      | 9.39.5 (new)  |
+| globals                          | –      | 17.14.0 (new) |
+| typescript-eslint                | –      | 8.72.2 (new)  |
+| @typescript-eslint/eslint-plugin | 7.18.0 | removed       |
+| @typescript-eslint/parser        | 7.18.0 | removed       |
+| eslint-plugin-import             | 2.32.0 | removed       |
+| eslint-plugin-react-hooks        | 4.6.2  | 7.1.1         |
+| eslint-plugin-react-refresh      | 0.4.26 | 0.5.7         |
+| eslint-plugin-simple-import-sort | 12.1.1 | 14.0.0        |
+| eslint-config-prettier           | 9.1.2  | 10.1.8        |
+| eslint-plugin-prettier           | 5.5.7  | 5.5.7         |
+| eslint-plugin-react              | 7.37.5 | 7.37.5        |
+| eslint-plugin-jsx-a11y           | 6.10.2 | 6.10.2        |
+
+Replaced packages:
+
+- `@typescript-eslint/parser` + `@typescript-eslint/eslint-plugin` →
+  `typescript-eslint` (v8 meta package).
+- `eslint-plugin-import` removed: none of its rules was enabled (decision
+  from phase 0).
+
+Config:
+
+- `.eslintrc.cjs` and `.eslintignore` → `eslint.config.js` (`defineConfig`,
+  `globalIgnores`, no `FlatCompat`). Ignores: `dist`, `dist-ssr`,
+  `**/*.local`; `node_modules` is ignored by default.
+- `lint` script: `eslint "**/*.{js,jsx,ts,tsx}"` → `eslint .`. It now also
+  lints `postcss.config.cjs` and `eslint.config.js`.
+- Browser globals only for `src/**`; Node globals only for the root config
+  files (previously `env.node` applied to all files).
+- Prettier: `eslint-plugin-prettier/recommended` (includes
+  `eslint-config-prettier`), placed last.
+
+Rule set compared with the baseline using `eslint --print-config` (65 → 135
+enabled rules for `src` files; no rule weakened from error to warn):
+
+- Newly enabled (approved in phase 0): recommended presets of
+  `eslint-plugin-react` (+ `jsx-runtime`), `eslint-plugin-jsx-a11y` and
+  `simple-import-sort/imports` + `exports`.
+- `react-hooks` 7 `flat.recommended`: adds the 14 React Compiler rules. They
+  reported nothing in this code base.
+- `react-refresh/only-export-components`: `warn` → `error` (via
+  `reactRefresh.configs.vite()`), which also sets
+  `allowCompoundComponents: true`, a pattern Vite's fast refresh supports.
+- Replaced by successor rules: `@typescript-eslint/ban-types` →
+  `no-empty-object-type`, `no-unsafe-function-type`,
+  `no-wrapper-object-types`; `@typescript-eslint/no-var-requires` →
+  `no-require-imports`; `@typescript-eslint/no-loss-of-precision` → core
+  `no-loss-of-precision`; `no-new-symbol` → `no-new-native-nonconstructor`.
+- Off for TS files because `tsc` reports them (typescript-eslint
+  `eslint-recommended`): `no-class-assign` (ts2629), `no-with` (ts1101).
+- Upstream changes in `eslint:recommended` 9: `no-inner-declarations`
+  removed; `no-constant-condition` now defaults to
+  `checkLoops: "allExceptWhileTrue"`. Not re-enabled.
+- `react-hooks/*` and `react-refresh/*` are scoped to `src/**`; they no
+  longer run on the tooling config files, which contain no React code.
+- Other "option changes" in the comparison are only defaults that ESLint 9
+  now prints explicitly.
+
+Code changes (all from new lint findings, no suppressions):
+
+- Import order in 11 files and `vite.config.ts` (autofix of
+  `simple-import-sort`). In `src/main.tsx` the side-effect import
+  `./index.css` moved above the other imports, so it now loads before
+  `App.css`; `App.css` is empty, so the cascade does not change.
+- `src/components/MapSection.tsx`: marker `<img>` got `alt='Location marker'`
+  (`jsx-a11y/alt-text`).
+- `src/components/SearchForn.tsx`: `catch (error)` → `catch` (unused binding;
+  ESLint 9 defaults `caughtErrors` to `"all"`).
+
+Verification (Node 26): `npm ci` ok without peer warnings, lint 0/0, build ok
+(JS 256.77 kB, gzip 86.24 kB), Prettier clean, `dev` and `preview` HTTP 200.
+All ESLint 8 deprecation warnings are gone.
+
+`npm audit`: 7 moderate, all `minimatch` <11.0.1 (GHSA-g3hv-75wg-m249) via
+`@typescript-eslint/typescript-estree`, which requires `minimatch@^10.2.2`,
+even in the latest 8.72.2. The `npm audit` "fix" is a downgrade to
+`typescript-eslint` 8.36.0, which is also affected. A real fix needs an
+`overrides` entry or an upstream release; not done without approval.
+Dev-only tooling, so the risk is low.
+
 ## Open items
 
 - Local system Node is 22.15.0; install Node 26 (e.g. via nvm-windows or
   the official installer) so `npm` matches `engines`. On Node 22, npm prints
   an `EBADENGINE` warning but still installs.
-- npm 11.20 `allowScripts` warning for `esbuild` (see step 1).
-
-- Deprecation warnings during install: `inflight`, `rimraf@3`, `glob@7`,
-  `@humanwhocodes/*` and `eslint@8`, all from the ESLint 8 tree (phase 3,
-  step 2).
-- Remaining audit findings: 6 moderate, `minimatch` via
-  `@typescript-eslint` 7 (phase 3, step 2).
+- npm 11.20 `allowScripts` warning for `esbuild` (deferred to step 5).
+- `eslint@9.39.5` is flagged as "no longer supported" on install (ESLint 10
+  is current); resolved by step 3.
+- `minimatch` advisory via `typescript-eslint` (see step 2).
 - Pre-existing, out of scope: searching by domain is not implemented (input
   validation only accepts IPv4, and the regex has no `$` anchor).
 - Pre-existing, out of scope: `h-160` and `hover:bg-veryDarkGray` are not

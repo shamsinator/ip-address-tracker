@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { getGeolocation } from '../services/ipGeolocation'
-import { useGeolocation } from '../context/useGeolocation'
+
 import iconArrowSVG from '../assets/icon-arrow.svg'
+import { useGeolocation } from '../context/useGeolocation'
+import { getGeolocation } from '../services/ipGeolocation'
 
 const SearchForm: React.FC = () => {
   const [ipAddress, setIpAddress] = useState<string>('')
@@ -28,7 +29,7 @@ const SearchForm: React.FC = () => {
       const data = await getGeolocation(ipAddress)
       setGeoData(data)
       setError(null)
-    } catch (error) {
+    } catch {
       setGeoData(null)
       setError('Could not fetch geolocation data.')
     }

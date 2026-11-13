@@ -1,6 +1,7 @@
-import { APIProvider, Map, AdvancedMarker } from '@vis.gl/react-google-maps'
-import { useGeolocation } from '../context/useGeolocation'
+import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps'
+
 import iconLocation from '../assets/icon-location.svg'
+import { useGeolocation } from '../context/useGeolocation'
 
 const containerStyle = {
   width: '100%',
@@ -29,7 +30,12 @@ const MapSection = () => {
             style={containerStyle}
             mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID as string}>
             <AdvancedMarker position={center}>
-              <img src={iconLocation} width={40} height={40} />
+              <img
+                src={iconLocation}
+                width={40}
+                height={40}
+                alt='Location marker'
+              />
             </AdvancedMarker>
           </Map>
         ) : (
