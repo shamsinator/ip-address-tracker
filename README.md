@@ -124,7 +124,6 @@ npm run lint
 - ESLint: A tool for identifying and fixing problems in JavaScript code.
 - Prettier: An opinionated code formatter.
 - TailwindCSS: A utility-first CSS framework.
-- dotenv: Loads environment variables from a .env file into process.env.
 
 ## Author
 

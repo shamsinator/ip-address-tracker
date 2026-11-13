@@ -396,6 +396,36 @@ Verification (Node 26): `npm ci` ok without peer warnings and without the
 `allowScripts` warning, lint 0/0, build ok (542 ms), Prettier clean, `dev`
 and `preview` HTTP 200. `npm audit`: unchanged.
 
+## Phase 3, step 6 – `dotenv` removed
+
+`dotenv` was only used as `dotenv.config()` in `vite.config.ts`; nothing
+reads `process.env`. Vite loads `.env` files itself for `import.meta.env`.
+
+Finding: `dotenv` was not just redundant but harmful. The tracked `.env` is a
+template with empty values. `dotenv.config()` ran while Vite loaded the
+config and put those empty `VITE_*` values into `process.env`. Vite gives
+existing `process.env` variables priority over `.env` files, so values in
+`.env.local` / `.env.[mode].local` were silently overridden by empty strings.
+
+Proof with a temporary, gitignored `.env.envprobe.local` containing dummy
+values (`vite build --mode envprobe`, file deleted afterwards):
+
+- with `dotenv`: 0 of 3 dummy values in the bundle;
+- without `dotenv`: 3 of 3 dummy values in the bundle.
+
+Variables provided by the environment itself (e.g. a hosting dashboard) were
+not affected, because `dotenv` does not overwrite existing variables.
+
+Changes:
+
+- `vite.config.ts`: removed the `dotenv` import and `dotenv.config()`.
+- `package.json` / `package-lock.json`: `dotenv` 16.6.1 removed.
+- `README.md`: removed `dotenv` from the dependency list.
+
+Verification (Node 26): `npm ci` ok without peer warnings, lint 0/0, build ok
+(sizes unchanged), Prettier clean, `dev` and `preview` HTTP 200.
+`npm audit`: unchanged.
+
 ## Open items
 
 - Local system Node is 22.15.0; install Node 26 (e.g. via nvm-windows or
@@ -409,4 +439,8 @@ and `preview` HTTP 200. `npm audit`: unchanged.
   validation only accepts IPv4, and the regex has no `$` anchor).
 - Pre-existing, out of scope: `h-160` and `hover:bg-veryDarkGray` are not
   valid Tailwind 3 classes (relevant for the Tailwind 4 step).
-- Security, report only: `.env` with real API keys is committed to git.
+- Correction to phase 0: the tracked `.env` does **not** contain real API
+  keys. All three values are empty in every commit that touched the file
+  (checked in step 6). The phase 0 redaction hid that the values were empty.
+  Real keys belong in `.env.local` (gitignored via `*.local`), which works
+  correctly since step 6.
