@@ -587,24 +587,38 @@ configs, lint 0/0 (no unsupported-version warning from typescript-eslint),
 build ok (sizes unchanged), Prettier clean, `dev` and `preview` HTTP 200.
 `npm audit`: unchanged.
 
+## Final verification
+
+Clean `npm ci` from the lockfile on Node 26.13.1 / npm 11.20.0: no
+deprecation, peer or `allowScripts` warnings. `tsc` (both configs) ok, lint
+0 errors / 0 warnings, build ok, `prettier --check .` clean, `dev` and
+`preview` HTTP 200. `npm-check-updates --target latest` only reports
+`typescript` `~6.0.3 → ~7.0.2` (deliberately skipped).
+
+`npm audit`: 13 moderate packages, all from the single advisory
+GHSA-g3hv-75wg-m249 (`minimatch` <11.0.1), down from 19 vulnerabilities
+(10 moderate, 9 high) at the baseline.
+
+Bundle compared with the baseline: JS 234.68 → 329.12 kB (gzip 78.62 →
+106.54 kB), mainly `react-dom` 19 (+23 kB gzip) and the axios / Maps minors
+(+7.5 kB gzip); CSS 8.21 → 11.74 kB (gzip 2.50 → 3.35 kB) due to Tailwind 4.
+
 ## Open items
 
 - Local system Node is 22.15.0; install Node 26 (e.g. via nvm-windows or
   the official installer) so `npm` matches `engines`. On Node 22, npm prints
   an `EBADENGINE` warning but still installs.
 - TypeScript stays on 6.0 until `typescript-eslint` supports 7.x.
-- Search button hover effect (`hover:bg-veryDarkGray`): to be handled
-  separately, after the upgrade (decision after step 9).
 - Temporary: `overrides` for `eslint-plugin-react` and the pinned
   `settings.react.version`. Remove both once `eslint-plugin-react` releases
   ESLint 10 support (PR #4022), and switch back to `'detect'`.
 - `minimatch` advisory GHSA-g3hv-75wg-m249 (waiting for upstream).
+- Search button hover: `hover:bg-veryDarkGray` never worked (no such color);
+  the intended class is probably `hover:bg-very-dark-gray`. To be handled
+  separately after the upgrade (decision after step 9).
 - Pre-existing, out of scope: searching by domain is not implemented (input
-  validation only accepts IPv4, and the regex has no `$` anchor).
-- Pre-existing, out of scope: the search button's `hover:bg-veryDarkGray`
-  never worked (no such color). The intended class is probably
-  `hover:bg-very-dark-gray`, which would add a visible hover effect.
-  (`h-160` was removed in step 9.)
+  validation only accepts IPv4, and the regex has no `$` anchor). The ipify
+  API supports a separate `domain` parameter for this.
 - Correction to phase 0: the tracked `.env` does **not** contain real API
   keys. All three values are empty in every commit that touched the file
   (checked in step 6). The phase 0 redaction hid that the values were empty.
