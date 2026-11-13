@@ -125,7 +125,40 @@ clean, `dev` and `preview` HTTP 200. `npm audit`: 6 moderate, all
 `minimatch` via `@typescript-eslint` 7 (fix requires the major in phase 3,
 step 2).
 
+## Phase 3, step 1 – Node 26
+
+Chosen version: Node 26 (Lithium, Active LTS; v26.13.1 at the time of
+writing, bundled with npm 11.20.0). It satisfies the final requirement
+`^20.19 || ^22.13 || >=24`.
+
+Changes:
+
+- `.nvmrc` (new): `26`.
+- `package.json`: `"engines": { "node": ">=26" }`.
+- `README.md`: prerequisite changed from "Node.js (>=16.x)" to Node.js 26.
+- `package-lock.json`: root `engines` added; npm 11.20 also pruned an orphaned
+  `@types/node` 20.14.5 / `undici-types` entry (only referenced as an
+  optional peer of Vite, never installed by any dependency).
+
+No CI or hosting configuration exists, so there was nothing else to update.
+
+Verification ran on a portable, SHA256-verified Node v26.13.1 (no version
+manager is installed locally; the system Node is still 22.15.0): `npm ci` ok,
+lint 0/0, build ok (sizes unchanged), Prettier clean, `dev` and `preview`
+HTTP 200. `npm audit`: 6 moderate (unchanged).
+
+New warning with npm 11.20: `esbuild@0.25.12` has a postinstall script that
+is "not yet covered by allowScripts". Not approved, because that is a
+configuration change. esbuild works without it (the binary comes from the
+optional `@esbuild/win32-x64` package). Revisit in step 5, because Vite 8 may
+no longer need esbuild.
+
 ## Open items
+
+- Local system Node is 22.15.0; install Node 26 (e.g. via nvm-windows or
+  the official installer) so `npm` matches `engines`. On Node 22, npm prints
+  an `EBADENGINE` warning but still installs.
+- npm 11.20 `allowScripts` warning for `esbuild` (see step 1).
 
 - Deprecation warnings during install: `inflight`, `rimraf@3`, `glob@7`,
   `@humanwhocodes/*` and `eslint@8`, all from the ESLint 8 tree (phase 3,
