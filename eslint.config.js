@@ -42,7 +42,7 @@ export default defineConfig([
       // Keep in sync with the installed React version. Switch back to
       // 'detect' (and drop the package.json override) once
       // eslint-plugin-react officially supports ESLint 10.
-      react: { version: '18.3' }
+      react: { version: '19.3' }
     }
   },
 

@@ -426,6 +426,49 @@ Verification (Node 26): `npm ci` ok without peer warnings, lint 0/0, build ok
 (sizes unchanged), Prettier clean, `dev` and `preview` HTTP 200.
 `npm audit`: unchanged.
 
+## Phase 3, step 7 – React 19
+
+Sources checked: the official React 19 upgrade guide (react.dev) and the
+React CHANGELOG up to 19.3.0 (no breaking changes after 19.0 that affect
+this project).
+
+Packages (upgraded together): `react` and `react-dom` 18.3.1 → 19.3.1,
+`@types/react` 18.3.31 → 19.3.0, `@types/react-dom` 18.3.7 → 19.3.0.
+`@vis.gl/react-google-maps` 1.10.2 has `react`/`react-dom`
+`>=16.8.0 || ^19.0` in its peer range.
+
+Codemods (official, run on `src`):
+
+- `npx codemod@latest react/19/migration-recipe` (codemod CLI 1.18.7; runs
+  `replace-reactdom-render`, `replace-string-ref`, `replace-act-import`,
+  `replace-use-form-state`, `prop-types-typescript`): 0 files modified.
+- `types-react-codemod@3.5.3 preset-19` (all transforms of the preset):
+  0 of 13 files modified. Run with the system Node 22, because the tool only
+  supports Node 18/20/22. Its CLI fails on paths with spaces (the npm cache
+  under `C:\Users\Amir Shamsi`), so the exact `jscodeshift` command it prints
+  was run with quoted paths.
+
+Config: `settings.react.version` in `eslint.config.js` `'18.3'` → `'19.3'`
+(pinned since step 3).
+
+Code changes: none. `tsc` and lint passed against React 19 before the
+codemods ran.
+
+Install note: the incremental `npm install` printed a transient `ERESOLVE
+overriding peer dependency` warning (React 19 next to the old
+`react-dom` 18 during the install). The clean `npm ci` afterwards has no
+peer warnings.
+
+Deviation – bundle size: JS 250.08 → 329.11 kB (gzip 83.72 → 106.54 kB). The
+sourcemap comparison with the same Vite 8 build shows that `axios`,
+`@vis.gl/react-google-maps` and the app code are identical; the growth comes
+entirely from `react-dom` 19. (React 18 shipped pre-minified production
+files, React 19 ships unminified ones that Vite minifies, so per-package
+source sizes are not comparable; the build output is.) CSS unchanged.
+
+Verification (Node 26): `npm ci` ok without peer warnings, lint 0/0, build ok,
+Prettier clean, `dev` and `preview` HTTP 200. `npm audit`: unchanged.
+
 ## Open items
 
 - Local system Node is 22.15.0; install Node 26 (e.g. via nvm-windows or
