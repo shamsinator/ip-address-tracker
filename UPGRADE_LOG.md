@@ -112,14 +112,26 @@ Sourcemap comparison of unminified source per package: `axios` 145.8 →
 191.7 kB, `@vis.gl/react-google-maps` 146.3 → 181.6 kB; everything else is
 unchanged. This is upstream growth, not a configuration issue.
 
+### `npm audit fix` (separate commit, lockfile only, no `--force`)
+
+Transitive updates within existing ranges: `brace-expansion` 1.1.15 →
+1.1.22 / 2.1.1 → 2.1.8, `js-yaml` 4.2.0 → 4.3.2, `postcss-selector-parser`
+6.1.4 → 6.1.6, `sucrase` 3.35.0 → 3.35.1. `sucrase` 3.35.1 no longer depends
+on `glob`, so the `glob@10` tree (31 lockfile entries) was pruned, and its
+deprecation warning is gone.
+
+Verification: `npm ci` ok, lint 0/0, build ok (sizes as above), Prettier
+clean, `dev` and `preview` HTTP 200. `npm audit`: 6 moderate, all
+`minimatch` via `@typescript-eslint` 7 (fix requires the major in phase 3,
+step 2).
+
 ## Open items
 
 - Deprecation warnings during install: `inflight`, `rimraf@3`, `glob@7`,
-  `@humanwhocodes/*` and `eslint@8` come from the ESLint 8 tree (phase 3,
-  step 2); `glob@10` comes from `sucrase` via Tailwind 3 (phase 3, step 9).
-- Remaining audit findings are transitive (`brace-expansion`, `js-yaml`,
-  `postcss-selector-parser`, `glob`, `minimatch`) and sit in the ESLint 8,
-  `@typescript-eslint` 7 and Tailwind 3 trees.
+  `@humanwhocodes/*` and `eslint@8`, all from the ESLint 8 tree (phase 3,
+  step 2).
+- Remaining audit findings: 6 moderate, `minimatch` via
+  `@typescript-eslint` 7 (phase 3, step 2).
 - Pre-existing, out of scope: searching by domain is not implemented (input
   validation only accepts IPv4, and the regex has no `$` anchor).
 - Pre-existing, out of scope: `h-160` and `hover:bg-veryDarkGray` are not
