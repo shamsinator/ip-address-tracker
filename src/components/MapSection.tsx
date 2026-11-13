@@ -21,7 +21,7 @@ const MapSection = () => {
       : null
 
   return (
-    <section className='h-160 relative z-0 w-full'>
+    <section className='relative z-0 w-full'>
       <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}>
         {center ? (
           <Map

@@ -469,6 +469,83 @@ source sizes are not comparable; the build output is.) CSS unchanged.
 Verification (Node 26): `npm ci` ok without peer warnings, lint 0/0, build ok,
 Prettier clean, `dev` and `preview` HTTP 200. `npm audit`: unchanged.
 
+## Phase 3, step 8 – `axios` and `@vis.gl/react-google-maps`
+
+No new major exists (checked with `npm view … dist-tags` and
+`npm-check-updates --target latest`): `axios` 1.21.1 and
+`@vis.gl/react-google-maps` 1.10.2 are the latest releases, and their minors
+were already applied in phase 2. Nothing to do, no commit.
+
+## Phase 3, step 9 – Tailwind CSS 4
+
+Source checked: the official Tailwind CSS v4 upgrade guide.
+
+Tool: `npx @tailwindcss/upgrade@4.3.5` on a clean tree. Its changes, reviewed:
+
+- `tailwind.config.js` → `@theme` in `src/index.css` (custom colors
+  `very-dark-gray`/`dark-gray`, font `rubik`, unused font size `input`).
+  Default breakpoints are unchanged (`sm` 640px, `md` 768px).
+- `@tailwind base/components/utilities` → `@import 'tailwindcss'`.
+- Added a compatibility block that keeps the v3 default border color.
+- Renames: `rounded` → `rounded-sm`, `focus:outline-none` →
+  `focus:outline-hidden` (same output as v3).
+- Reverted: the tool rewrote `hover:bg-veryDarkGray` to
+  `hover:bg-very-dark-gray`. The v3 build contained no hover rule for this
+  button, so that would have added a new hover effect. Kept the original
+  (still non-functional) class; see open items.
+- PostCSS config: the tool could not migrate it (dynamic JS); done manually.
+
+Manual changes:
+
+- `vite.config.ts`: `@tailwindcss/vite` plugin instead of the inline PostCSS
+  `tailwindcss()` plugin.
+- Removed `postcss.config.cjs` (it was already ignored by Vite since the
+  inline PostCSS config took precedence), `autoprefixer` and the direct
+  `postcss` devDependency. `postcss` remains only as a dependency of Vite.
+- `src/index.css`: `@import 'tailwindcss' source('.')`, so only `src` is
+  scanned, as with the v3 `content` setting. Without it, v4's automatic
+  detection also picked up words from `README.md`/`UPGRADE_LOG.md` and
+  generated `contents`, `h-160`, `transform` and `border`.
+- `src/index.css`: compatibility styles from the upgrade guide for the
+  placeholder color (`gray-400`) and `cursor: pointer` on buttons, both
+  changed defaults in the v4 Preflight.
+- `src/components/MapSection.tsx`: removed `h-160`. It produced nothing in
+  v3 but would become `height: 40rem` in v4.
+- `src/components/SearchForn.tsx`: added `bg-white` to the input. The v4
+  Preflight sets `background-color: transparent` on inputs (v3 only did that
+  for buttons), which would have made the search field show the header
+  pattern.
+- `.prettierrc`: `"tailwindStylesheet": "./src/index.css"` (finalises step 4).
+  With the v4 sort order one class list changed
+  (`src/components/DataItem.tsx`, `uppercase` after the color). Kept in the
+  same commit, contrary to the plan of a separate formatting commit, because
+  without it this commit itself would fail lint (`prettier/prettier`) and
+  `prettier --check`.
+
+Visual comparison with the v3 build: both builds served side by side and
+rendered in headless Chrome 157 (all non-localhost requests blocked, so
+both show the same loading state with fallback font) at 375×812 and
+1440×900. For all 30 elements outside the map container, position, size
+and 26 visual properties were compared, with colors normalised to RGB.
+
+- Position and size: identical for every element at both widths.
+- Remaining differences: placeholder color 156,163,175 → 153,161,175 and
+  divider color 209,213,219 → 209,213,220 (v4's oklch palette), and extra
+  transparent layers in the `shadow-lg` value (same rendering).
+- Screenshots: visually identical.
+- The utility set is identical to v3 apart from the two renames.
+
+Browser support: Tailwind 4 requires Safari 16.4, Chrome 111 and Firefox
+128, which is stricter than the Vite 8 default target for Firefox (114).
+
+Bundle size: CSS 7.03 → 11.74 kB (gzip 2.47 → 3.35 kB), due to the theme
+variables, `@property` rules and cascade layers that v4 always emits. JS
+unchanged.
+
+Verification (Node 26): `npm ci` ok without peer warnings, lint 0/0, build ok,
+Prettier clean (`npm run format` gives no further changes), `dev` and
+`preview` HTTP 200. `npm audit`: unchanged.
+
 ## Open items
 
 - Local system Node is 22.15.0; install Node 26 (e.g. via nvm-windows or
@@ -480,8 +557,10 @@ Prettier clean, `dev` and `preview` HTTP 200. `npm audit`: unchanged.
 - `minimatch` advisory GHSA-g3hv-75wg-m249 (waiting for upstream).
 - Pre-existing, out of scope: searching by domain is not implemented (input
   validation only accepts IPv4, and the regex has no `$` anchor).
-- Pre-existing, out of scope: `h-160` and `hover:bg-veryDarkGray` are not
-  valid Tailwind 3 classes (relevant for the Tailwind 4 step).
+- Pre-existing, out of scope: the search button's `hover:bg-veryDarkGray`
+  never worked (no such color). The intended class is probably
+  `hover:bg-very-dark-gray`, which would add a visible hover effect.
+  (`h-160` was removed in step 9.)
 - Correction to phase 0: the tracked `.env` does **not** contain real API
   keys. All three values are empty in every commit that touched the file
   (checked in step 6). The phase 0 redaction hid that the values were empty.

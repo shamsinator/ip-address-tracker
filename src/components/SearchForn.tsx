@@ -48,7 +48,7 @@ const SearchForm: React.FC = () => {
           type='text'
           placeholder='Search for any IP address or domain'
           required
-          className='w-4/5 cursor-text rounded-l-xl border-transparent p-4 text-lg font-normal placeholder:text-lg focus:outline-none'
+          className='w-4/5 cursor-text rounded-l-xl border-transparent bg-white p-4 text-lg font-normal placeholder:text-lg focus:outline-hidden'
           value={ipAddress}
           onChange={(event) => setIpAddress(event.target.value)}
           onKeyDown={handleKeyPress}

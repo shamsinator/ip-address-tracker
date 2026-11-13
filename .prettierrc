@@ -7,5 +7,6 @@
   "jsxSingleQuote": true,
   "bracketSameLine": true,
   "plugins": ["prettier-plugin-tailwindcss"],
+  "tailwindStylesheet": "./src/index.css",
   "endOfLine": "lf"
 }
