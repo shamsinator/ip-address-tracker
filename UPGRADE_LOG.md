@@ -336,6 +336,26 @@ Verification (Node 26): `npm ci` ok without peer warnings, lint 0/0, build ok
 (sizes unchanged), Prettier clean, `dev` and `preview` HTTP 200.
 `npm audit`: unchanged (13 moderate, single `minimatch` advisory).
 
+## Phase 3, step 5a – Vite 7
+
+Source checked: Vite "Migration from v6" guide (v7.3.1 docs).
+
+Packages: `vite` 6.4.6 → 7.3.8 (`esbuild` 0.25.12 → 0.28.2 as a Vite
+dependency). `@vitejs/plugin-react` 5.2.0 already supports `^7.0.0`.
+
+Relevant changes: Node 20.19+ / 22.12+ required (Node 26 is pinned). The
+default `build.target` is now `'baseline-widely-available'`: Chrome/Edge
+107, Firefox 104, Safari 16.0 (previously Chrome 87, Edge 88, Firefox 78,
+Safari 14). Older browsers are no longer covered by the default build. None
+of the removed features (Sass legacy API, `splitVendorChunkPlugin`,
+`transformIndexHtml` `enforce`/`transform`) are used.
+
+Config and code changes: none.
+
+Verification (Node 26): `npm ci` ok without peer warnings, lint 0/0, build ok
+(JS 255.34 kB, gzip 85.99 kB; CSS unchanged), Prettier clean, `dev` and
+`preview` HTTP 200. `npm audit`: unchanged.
+
 ## Open items
 
 - Local system Node is 22.15.0; install Node 26 (e.g. via nvm-windows or
