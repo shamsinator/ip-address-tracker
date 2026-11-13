@@ -1,6 +1,6 @@
 import js from '@eslint/js'
 import { defineConfig, globalIgnores } from 'eslint/config'
-import jsxA11y from 'eslint-plugin-jsx-a11y'
+import jsxA11y from 'eslint-plugin-jsx-a11y-x'
 import prettierRecommended from 'eslint-plugin-prettier/recommended'
 import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
@@ -31,13 +31,18 @@ export default defineConfig([
       react.configs.flat['jsx-runtime'],
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite(),
-      jsxA11y.flatConfigs.recommended
+      jsxA11y.configs.recommended
     ],
     languageOptions: {
       globals: globals.browser
     },
     settings: {
-      react: { version: 'detect' }
+      // Pinned instead of 'detect': eslint-plugin-react 7.37.5 calls
+      // context.getFilename() for detection, which ESLint 10 removed.
+      // Keep in sync with the installed React version. Switch back to
+      // 'detect' (and drop the package.json override) once
+      // eslint-plugin-react officially supports ESLint 10.
+      react: { version: '18.3' }
     }
   },
 

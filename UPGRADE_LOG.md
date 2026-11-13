@@ -245,7 +245,68 @@ All ESLint 8 deprecation warnings are gone.
 even in the latest 8.72.2. The `npm audit` "fix" is a downgrade to
 `typescript-eslint` 8.36.0, which is also affected. A real fix needs an
 `overrides` entry or an upstream release; not done without approval.
-Dev-only tooling, so the risk is low.
+Dev-only tooling, so the risk is low. Decision: wait for upstream.
+
+## Phase 3, step 3 – ESLint 10
+
+Source checked: ESLint `migrate-to-10.0.0.md` (v10.14.0). ESLint 9 has been
+EOL since 2026-08-06 (eslint.org/version-support).
+
+Peer support for ESLint 10 (checked per plugin):
+
+| Plugin                              | `peerDependencies.eslint` | ESLint 10 |
+| ----------------------------------- | ------------------------- | --------- |
+| typescript-eslint 8.72.2            | `… \|\| ^10.0.0`          | yes       |
+| eslint-plugin-react-hooks 7.1.1     | `… \|\| ^10.0.0`          | yes       |
+| eslint-plugin-react-refresh 0.5.7   | `^9 \|\| ^10`             | yes       |
+| eslint-plugin-simple-import-sort 14 | `>=5.0.0`                 | yes       |
+| eslint-config-prettier 10.1.8       | `>=7.0.0`                 | yes       |
+| eslint-plugin-prettier 5.5.7        | `>=8.0.0`                 | yes       |
+| eslint-plugin-react 7.37.5          | `… \|\| ^9.7`             | **no**    |
+| eslint-plugin-jsx-a11y 6.10.2       | `… \|\| ^9`               | **no**    |
+
+Decisions (approved):
+
+- `eslint-plugin-react`: temporary `overrides` entry
+  (`"eslint-plugin-react": { "eslint": "$eslint" }`). Upstream is working on
+  it (open PRs #4022 and #3979, not released).
+- `eslint-plugin-jsx-a11y` → `eslint-plugin-jsx-a11y-x` 0.2.0 (fork, now under
+  the eslint-community organisation, peer `^9 || ^10`). Upstream has had no
+  commits since 2026-01-04, and its ESLint 10 PRs are open since February.
+
+Deviation: with the override, `eslint-plugin-react` crashed on ESLint 10
+(`contextOrFilename.getFilename is not a function` in `lib/util/version.js`)
+because `settings.react.version: 'detect'` calls an API that ESLint 10
+removed. An initial scan had missed this call site. A broader scan found no
+other unguarded calls of removed APIs in the enabled rules
+(`getJSDocComment` in component detection is wrapped in `try/catch`; it only
+affects components marked via JSDoc, of which there are none). Workaround
+(approved): `settings.react.version` is pinned to `'18.3'` with a comment in
+`eslint.config.js`. It must be updated with React in step 7.
+
+Packages: `eslint` 9.39.5 → 10.14.0, `@eslint/js` 9.39.5 → 10.0.1,
+`eslint-plugin-jsx-a11y` 6.10.2 removed, `eslint-plugin-jsx-a11y-x` 0.2.0
+added.
+
+Config: import of `eslint-plugin-jsx-a11y-x`, `jsxA11y.configs.recommended`
+instead of `flatConfigs.recommended`; rule namespace is now `jsx-a11y-x/`.
+
+Rule set compared with ESLint 9 (`--print-config`): nothing removed, no
+severity changes. Added by `eslint:recommended` 10: `no-unassigned-vars`,
+`no-useless-assignment`, `preserve-caught-error`.
+`no-shadow-restricted-names` now also reports `globalThis`. The jsx-a11y-x
+rules match the jsx-a11y recommended set; only default options are now
+printed explicitly. Sanity check with a temporary file confirmed that
+`react/jsx-key` and `jsx-a11y-x/alt-text` still report.
+
+Code changes: none. The new rules and JSX reference tracking reported
+nothing.
+
+Verification (Node 26): `npm ci` ok without peer warnings, lint 0/0, build ok
+(sizes unchanged), Prettier clean, `dev` and `preview` HTTP 200.
+`npm audit`: 13 moderate packages, still the single advisory
+GHSA-g3hv-75wg-m249 (`minimatch` <11.0.1); ESLint 10 and jsx-a11y-x also
+depend on `minimatch@^10`.
 
 ## Open items
 
@@ -253,9 +314,10 @@ Dev-only tooling, so the risk is low.
   the official installer) so `npm` matches `engines`. On Node 22, npm prints
   an `EBADENGINE` warning but still installs.
 - npm 11.20 `allowScripts` warning for `esbuild` (deferred to step 5).
-- `eslint@9.39.5` is flagged as "no longer supported" on install (ESLint 10
-  is current); resolved by step 3.
-- `minimatch` advisory via `typescript-eslint` (see step 2).
+- Temporary: `overrides` for `eslint-plugin-react` and the pinned
+  `settings.react.version`. Remove both once `eslint-plugin-react` releases
+  ESLint 10 support (PR #4022), and switch back to `'detect'`.
+- `minimatch` advisory GHSA-g3hv-75wg-m249 (waiting for upstream).
 - Pre-existing, out of scope: searching by domain is not implemented (input
   validation only accepts IPv4, and the regex has no `$` anchor).
 - Pre-existing, out of scope: `h-160` and `hover:bg-veryDarkGray` are not
