@@ -546,11 +546,55 @@ Verification (Node 26): `npm ci` ok without peer warnings, lint 0/0, build ok,
 Prettier clean (`npm run format` gives no further changes), `dev` and
 `preview` HTTP 200. `npm audit`: unchanged.
 
+## Phase 3, step 10 – TypeScript 6 (staying on 6, not 7)
+
+Source checked: the official TypeScript 6.0 release notes, including
+"Breaking Changes and Deprecations" and "Preparing for TypeScript 7.0".
+
+Package: `typescript` 5.9.3 → 6.0.3, range `~6.0.3`. A caret range would
+also accept a future 6.1, which falls outside the `typescript-eslint` peer
+range (`>=4.8.4 <6.1.0`).
+
+Relevant changes checked against this project:
+
+- New defaults: `strict: true` (already set), `module: esnext`, floating
+  `target` (both set explicitly), `noUncheckedSideEffectImports: true` (the
+  CSS side-effect imports are declared by `vite/client`), `types: []` (no
+  global `@types` packages are needed; `vite/client` is referenced via
+  `src/vite-env.d.ts`), `rootDir` defaults to `.` (irrelevant with
+  `noEmit`).
+- Deprecated options (`target: es5`, `baseUrl`, `moduleResolution
+node/classic`, `esModuleInterop false`, `allowSyntheticDefaultImports
+false`, `outFile`, AMD/UMD/SystemJS): none are used. No
+  `ignoreDeprecations` needed.
+
+tsconfig change: `lib` `["ES2020", "DOM", "DOM.Iterable"]` →
+`["ES2020", "DOM"]`, because `DOM.Iterable` is now included in `DOM`.
+`tsconfig.node.json` is unchanged (`allowSyntheticDefaultImports: true` is
+still valid).
+
+Code changes: none. `tsc` passes for both `tsconfig.json` and
+`tsconfig.node.json` without errors or deprecation warnings.
+
+TypeScript 7: not adopted. `typescript` 7.0.2 is available, but the
+installed `typescript-eslint` 8.72.2 only supports `>=4.8.4 <6.1.0`
+(re-checked at the end of this step). No side-by-side alias was added.
+To upgrade later: wait for a `typescript-eslint` release whose
+`peerDependencies.typescript` includes 7.x, then update both together.
+
+Verification (Node 26): `npm ci` ok without peer warnings, `tsc` ok for both
+configs, lint 0/0 (no unsupported-version warning from typescript-eslint),
+build ok (sizes unchanged), Prettier clean, `dev` and `preview` HTTP 200.
+`npm audit`: unchanged.
+
 ## Open items
 
 - Local system Node is 22.15.0; install Node 26 (e.g. via nvm-windows or
   the official installer) so `npm` matches `engines`. On Node 22, npm prints
   an `EBADENGINE` warning but still installs.
+- TypeScript stays on 6.0 until `typescript-eslint` supports 7.x.
+- Search button hover effect (`hover:bg-veryDarkGray`): to be handled
+  separately, after the upgrade (decision after step 9).
 - Temporary: `overrides` for `eslint-plugin-react` and the pinned
   `settings.react.version`. Remove both once `eslint-plugin-react` releases
   ESLint 10 support (PR #4022), and switch back to `'detect'`.
